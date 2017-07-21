@@ -27,6 +27,7 @@
     "objectid": "^3.2.1",
     "path": "^0.12.7",
     "require": "^2.4.20",
+    "request": "^2.81.0",
     "unsplash-js": "^4.2.0",
     "v-toaster": "^1.0.2",
     "vue": "^2.3.4",
