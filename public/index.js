@@ -24,14 +24,14 @@ Vue.use(notify, {timeout: 5000});
 Vue.use(Vuetify);
 
 const router = new VueRouter({
-    routes,
+    routes: routes,
     mode: 'history'
 });
 
 // Register components
 new Vue({
     el: '#app',
-    router,
+    router: router,
     render: h => h(Index)
 });
 
