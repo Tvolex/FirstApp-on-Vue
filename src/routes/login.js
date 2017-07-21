@@ -6,39 +6,27 @@ const DBurl = config.DBurl;
 const router = express.Router();
 const MongoClient = mongodb.MongoClient;
 
-var login = router.get('/', (req, res) => {
-    
-        var Session = {};
-        Session.id = req.session.id;
-        Session.UserEmail = req.session.UserEmail;
+const login = router.get('/', async(req, res) => {
+    const Session = {};
+    Session.id = req.session.id;
+    Session.UserEmail = req.session.UserEmail;
 
-        try {
-            MongoClient.connect(DBurl, (err,db) => {
-                if(err) {
-                    console.log("Error", err);
-                } else {
-                    console.log("Connection to db: " + DBurl);
-                    var collection = db.collection("users");
-                    collection.find({"UserEmail" : Session.UserEmail, "SessionID" : req.session.id}).limit(1).next((err, doc) => {
-                        if(err) {
-                            console.log("Error : " + err);
-                        } else if(doc) {
-                            res.cookie('btnExit', true)
-                                .json(doc);
-                        } else if(!doc) {
-                            res.clearCookie('btnExit')
-                                .json(doc);
-                        }
-                        db.close();
-                    });
-                }
-            });
-        } catch (e) {
-            console.log(e);
-            res.status(400);
-        }
-    
-   
+    const db = await MongoClient.connect(DBurl);
+    const collection = db.collection("users");
+    const doc = await collection.find({"UserEmail" : Session.UserEmail, "SessionID" : req.session.id}).limit(1).next();
+
+    console.log("login.js: Connection to db: " + DBurl);
+
+    db.close();
+
+    if (doc)
+        res.status(200)
+            .cookie('btnExit', true)
+            .json({login: true});
+    else
+        res.status(401)
+            .clearCookie('btnExit')
+            .json({login: false});
 });
 
 module.exports = login;

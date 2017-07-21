@@ -92,7 +92,7 @@ hr{
     height: 20%;
     border: solid 2px black;
     color:black;
-    background-image: url("img/Chat.png");
+    background-image: url("../img/Chat.png");
     background-repeat: no-repeat;
     background-size: 100% 100%;
     background-position: center;

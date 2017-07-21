@@ -1,13 +1,16 @@
 //require modules
-import "babel-core/register";
-import "babel-polyfill";
-import Vue from 'vue';
-import VueRouter from 'vue-router';
-import VueTransitionGroupPlus from 'vue-transition-group-plus';
+import "babel-core/register"
+import "babel-polyfill"
+import Vue from 'vue'
+import VueRouter from 'vue-router'
+import notify from 'v-toaster'
+import Vuetify from 'vuetify'
+import 'v-toaster/dist/v-toaster.css'
+
 // require components
-import Index from '../public/components/Index.vue';
-import News from './components/News.vue';
-import Users from '../public/components/Users.vue';
+import Index from '../public/components/Index.vue'
+import News from './components/News.vue'
+import Users from '../public/components/Users.vue'
 
 const routes = [
     { path: '/', component: Index},
@@ -15,9 +18,10 @@ const routes = [
     { path: '/news', component: News}
 ];
 
-//Setup routes
+//Setup Vue
 Vue.use(VueRouter);
-Vue.use(VueTransitionGroupPlus);
+Vue.use(notify, {timeout: 5000});
+Vue.use(Vuetify);
 
 const router = new VueRouter({
     routes,

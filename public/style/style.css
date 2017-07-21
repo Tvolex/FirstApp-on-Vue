@@ -230,7 +230,7 @@ section::selection {
 
 }
 .btnCopy {
-    background: url("img/clipboard.png");
+    background: url("../img/clipboard.png");
     background-repeat: no-repeat;
     background-size: contain;
     width: 20px;
@@ -244,7 +244,7 @@ section::selection {
     -ms-user-select: none;
 }
 .toTop{
-    background-image: url("img/todown.jpg");
+    background-image: url("../img/todown.jpg");
     background-size: cover;
     position: absolute;
     left: 50%;
@@ -258,7 +258,7 @@ section::selection {
 
 }
 .todown{
-    background-image: url("img/todown.jpg");
+    background-image: url("../img/todown.jpg");
     background-size: cover;
 
     position: absolute;
@@ -275,7 +275,7 @@ section::selection {
     padding: 200px 20% 10% 20%;
     height: 50%;
     width: 100%;
-    background-image: url('img/1back.jpg');
+    background-image: url('../img/1back.jpg');
     background-repeat: no-repeat;
 
 }
@@ -283,7 +283,7 @@ section::selection {
     padding: 200px 0 0;
     height: 500px;
     width: 100%;
-    background-image: url('img/2back.jpg');
+    background-image: url('../img/2back.jpg');
     background-repeat: no-repeat;
 
 
@@ -292,7 +292,7 @@ section::selection {
     padding: 200px 0 0;
     height: 500px;
     width: 100%;
-    background-image: url('img/3back.jpg');
+    background-image: url('../img/3back.jpg');
     background-repeat: no-repeat;
     background-position: center;
     margin-top: 10%;
@@ -302,14 +302,14 @@ section::selection {
     padding: 200px 0 0;
     height: 600px;
     width: 100%;
-    background-image: url('img/4back.jpg');
+    background-image: url('../img/4back.jpg');
     background-repeat: no-repeat;
     margin-top: 10%;
 
 }
 .backImg{
     position:fixed;
-    background-image: url('img/grey.jpg');
+    background-image: url('../img/grey.jpg');
     background-size:contain;
     height: 100%;
     width: 100%;
@@ -319,7 +319,7 @@ section::selection {
     margin-left:50%;
     left: -550px;
     margin-top: 0;
-    background-image: url('img/DevPicture.jpg');
+    background-image: url('../img/DevPicture.jpg');
     background-repeat:round;
     background-size:cover;
     border: solid 2px black;
@@ -333,7 +333,7 @@ section::selection {
     height: 200px;
     width: 200px;
     margin-top: -50px;
-    background-image: url("img/Vasya.jpg");
+    background-image: url("../img/Vasya.jpg");
     background-repeat: no-repeat;
     background-size: cover;
     border: dashed 2px white;
@@ -346,7 +346,7 @@ section::selection {
     height: 200px;
     width: 200px;
     margin-top: -50px;
-    background-image: url("img/Nika.jpg");
+    background-image: url("../img/Nika.jpg");
     background-repeat: no-repeat;
     background-size: cover;
     border: dashed 2px white;
@@ -378,7 +378,7 @@ section::selection {
     height: 200px;
     width: 200px;
     margin-top: -150px;
-    background-image: url("img/Stas.jpg");
+    background-image: url("../img/Stas.jpg");
     background-repeat: no-repeat;
     background-size:cover;
     border: dashed 2px black;
@@ -388,7 +388,7 @@ section::selection {
     position: relative;
     margin-left: -50%;
     margin-top: -50px;
-    background-image: url("img/VK.jpg");
+    background-image: url("../img/VK.jpg");
     background-repeat:round;
     background-size:cover;
     height:30px;
@@ -402,7 +402,7 @@ section::selection {
     left: 23%;
     margin-left: -15px;
     margin-top: -45px;
-    background-image: url("img/FB.jpg");
+    background-image: url("../img/FB.jpg");
     background-repeat:round;
     background-size:cover;
     height: 30px;
@@ -415,7 +415,7 @@ section::selection {
     position: relative;
     margin-left: 63%;
     margin-top: -50px;
-    background-image: url("img/VK.jpg");
+    background-image: url("../img/VK.jpg");
     background-repeat:round;
     background-size:cover;
     height:30px;
@@ -429,7 +429,7 @@ section::selection {
     left: 79.5%;
     margin-left: -15px;
     margin-top: -45px;
-    background-image: url("img/FB.jpg");
+    background-image: url("../img/FB.jpg");
     background-repeat:round;
     background-size:cover;
     height: 30px;
@@ -439,7 +439,7 @@ section::selection {
 }
 
 .EnterBody {
-    background-image: url("img/SanFrancisco.jpg");
+    background-image: url("../img/SanFrancisco.jpg");
 
 }
 

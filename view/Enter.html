@@ -8,20 +8,31 @@
      <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
      <script src="scripts/cookie.js"></script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.16.2/axios.min.js"></script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/async/2.5.0/async.min.js"></script>
      <script>
-         $.ajax({
-             url: "/login",
-             type: "GET",
-             success: function (res) {
-                 console.log("RESPONSE: ", res);
-                 if (res) {
-                     window.location.replace("/MyOffice");
-                 } else {
-                     $.removeCookie('btnExit');
-                     $("#btnExit").remove();
-                 }
-             }
-         });
+         let login = false;
+
+         (async function () {
+             const response =  await axios.get('/login');
+             login = response.data.login;
+             if(login)
+                 window.location.replace('/MyOffice');
+         }).call().catch((e)=>{console.log(e)});
+
+//         $.ajax({
+//             url: "/login",
+//             type: "GET",
+//             success: function (res) {
+//                 console.log("RESPONSE: ", res);
+//                 if (res.login === true) {
+//                     window.location.replace("/MyOffice");
+//                 } else {
+//                     $.removeCookie('btnExit');
+//                     $("#btnExit").remove();
+//                 }
+//             }
+//         });
      </script>
  </head>
  <header>

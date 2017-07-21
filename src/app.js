@@ -15,6 +15,7 @@ const deleteAcc = require ('./routes/deleteAcc');
 const change = require ('./routes/change');
 const getNews = require('./routes/getNews');
 const createNews = require('./routes/createNews');
+const deleteNews = require('./routes/deleteNews');
 const deleteS = require ('./routes/deleteS');
 const getPhoto = require ('./routes/getPhoto');
 const randomPhoto = require('./routes/randomPhoto');
@@ -65,6 +66,7 @@ app.get('/vue', (req, res) => {
 
 app.use('/getNews', getNews);
 app.use('/createNews', createNews);
+app.use('/deleteNews', deleteNews);
 app.use('/MyOffice', MyOffice);
 app.use('/Authorization', Authorization);
 app.use('/AuthForDesktop', AuthFD);

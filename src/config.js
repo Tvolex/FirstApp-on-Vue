@@ -3,7 +3,7 @@ const config = {};
 
 if(process.env.NODE_ENV === 'dev') {
     config.port = 3000;
-    config.DBurl = 'mongodb://127.0.0.17:27017/FirstApp';
+    config.DBurl = 'mongodb://127.0.0.1:27017/FirstApp';
 } else {
     config.port = process.env.PORT;
     config.dbName = "firstappusers";

@@ -1,137 +1,243 @@
+<!--suppress HtmlUnknownTag -->
 <template>
+    <div id="app">
 
-    <div>
-        <router-view></router-view>
-        <div class="AddNews" data-toggle="modal" data-target="#modal-1">Are you have interested news? Add NEWS</div>
+        <template v-if="login" >
+            <div>
+                <my-header></my-header>
+                <router-view></router-view>
 
-        <div class="modal fade" id="modal-1">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title" align="center">
-                            Add news
-                            <button class="close"  type="button" data-dismiss="modal"> &times; </button>
-                        </h4>
-                    </div>
-                    <div class="modal-body" id="ModalBodyAddNews">
-                        <form id="formCreateNews" name="formCreateNews" class="formCreateNews">
-                            <span class="spanPopUpAddTitle">Add news title</span>
-                            <br>
-                            <input type="text" v-model="createItem.title" class="inputPopUpAddTitle form-control" id="title" name="title">
-                            <br><span class="spanPopUpAddTitle">Add news description</span><br>
-                            <textarea cols="30" rows="10" v-model="createItem.description" class="inputPopUpAddDescription form-control" id="description" name="description" ></textarea>
-                            <button class="btn btn-primary" id="addNews"  v-on:click="createNews">Add news</button>
-                        </form>
+                <createNewsModal > </createNewsModal>
+                <div class="GeneralBlock">
 
-                    </div>
+                    <transition-group transition="slide-y-transition" name="list" tag="div">
+                        <!-- <div v-for="item in items" class="newsBlock" v-bind:id="item._id" v-bind:key="item._id">
+                             <div class="newsHeader" >
+                                 <span class="spanNewsHeader" >{{item.title}}</span>
+                                 <button class="close"  v-bind:id="item._id" v-on:click="deleteNews($event)"  type="button" > &times; </button>
+                             </div>
+                             <div class="newsBody" >
+                                 <span class="spanNewsBody" >{{item.description}}</span>
+                             </div>
+                         </div> -->
+
+                        <div style="margin-top: 20px; transition: 0.3s all" v-for="item in items" v-bind:id="item._id" v-bind:key="item._id">
+
+                            <v-layout v-bind:key="'layout'+item._id" transition="scale-transition">
+                                <v-flex xs12 sm6 offset-sm3>
+                                    <v-card v-bind:key="'card'+item._id" transition="scale-transition">
+                                        <v-card-media
+                                                class="black--text"
+                                                height="200px"
+                                                v-bind:src="item.img ? item.img : '/img/DevPicture.jpg'">
+
+                                            <v-container fill-height fluid>
+                                                <v-layout fill-height>
+                                                    <v-flex xs12 align-end flexbox>
+                                                        <span class="headline white--text title-background">{{item.title | validateTitle}}</span>
+                                                    </v-flex>
+                                                </v-layout>
+                                            </v-container>
+                                        </v-card-media>
+                                        <v-card-title>
+                                            <div>
+                                                <span class="description-background">{{item.description | validateDescription}}</span><br>
+                                                <br><span class="grey--text">Date:{{item.createdAt | validateDate}}</span>
+                                                <span class="grey--text">{{item.author}}</span><br>
+                                            </div>
+                                        </v-card-title>
+                                        <v-card-actions>
+                                            <v-btn flat class="orange--text">Share</v-btn>
+                                            <v-btn flat class="orange--text">Explore</v-btn>
+                                            <button class="close"  v-bind:id="item._id" v-on:click="deleteNews($event)"  type="button" > &times; </button>
+                                        </v-card-actions>
+                                    </v-card>
+                                </v-flex>
+                            </v-layout>
+                        </div>
+
+
+
+                    </transition-group>
                 </div>
-            </div>
-        </div>
-        <div class="GeneralBlock">
-            <transition-group-plus transition-mode="in-out" tag="div">
-                <transition-plus @enter="onEnter" @leave="onLeave">
-                    <div v-for="item in items" v-bind:class="item.className" v-bind:id="item._id" v-bind:key="item._id">
-                        <div class="newsHeader" >
-                            <span class="spanNewsHeader">{{item.title}}</span>
-                        </div>
-                        <div class="newsBody">
-                            <span class="spanNewsBody">{{item.description}}</span>
-                        </div>
-                    </div>
-                </transition-plus>
 
-                </TransitionGroupPlus>
-        </div>
+            </div>
+        </template>
+
+        <template v-else-if="login === false">
+            <div  align="center" id="Unauthorized">
+                <h5>You don`t have access to this page</h5>
+                <hr>
+                <h5>Please, <a href="/Enter">Login</a> </h5>
+
+            </div>
+        </template>
+
+
+
+
     </div>
+
+
 </template>
 
 <script>
-    import axios from 'axios';
-    import VueTransitionGroupPlus from "vue-transition-group-plus"
+    import axios from 'axios'
+    import notify from 'v-toaster'
+    import Vuetify from 'vuetify'
+    import 'v-toaster/dist/v-toaster.css'
+    import 'vuetify/dist/vuetify.min.css'
+
+    import createNewsModal from './createNewsModal.vue'
+    import header from './header.vue'
 
     export default {
-        config: {
-            use: VueTransitionGroupPlus
+        components: {
+            'createNewsModal': createNewsModal,
+            'my-header': header,
         },
         data: () => {
+
             return {
                 items: [],
-                createItem: {
-                    title: '',
-                    description: '',
-                    className: 'newsBlock',
-                    length: '',
-                },
+                login: false,
+                connection: false,
                 lastDate: new Date(1970),
                 errors: []
             }
         },
-        created: function () {
-            this.getNews();
-            setInterval(t => this.getNews(), 5000);
-        },
-        methods: {
-            createNews: function(){
-                event.preventDefault();
+        created: async function () {
 
+            // check login
+            try {
+               let login = await axios.get('/login');
+               this.login = login.data.login;
+
+            } catch (e) {
+                let errorNotification = "401: Unauthorized.";
+                this.notificator('error', errorNotification);
+                console.log(e);
+            }
+            this.checkLogin();
+
+        },
+
+        methods: {
+            checkLogin: function () {
+                if (this.login) {
+                    this.getNews();
+                    this.updateNews();
+                }
+            },
+
+            updateNews: function () {
+                setInterval(() => this.getNews(), 5000);
+            },
+
+            createNews: async function() {
                 let data = {
+                    author: this.createItem.author,
                     title: this.createItem.title,
                     description: this.createItem.description,
                 };
 
-                axios.post('/createNews', data).then(res => {
-                    if(res) this.getNews();
-                });
+                let ok = await axios.post('/createNews', data);
+
+                ok ? this.getNews() : ok;
+
             },
-            getNews: function () {
+
+            getNews: async function () {
                 let date = { lastDate: this.lastDate};
 
-                axios.get('/getNews', { params: date}).then(res => {
-                    if(res !== []) {
-                        this.showNews(res.data.concat(this.items));
-                        this.setShowEffects(res.data.length);
-                    }
-                }).catch(e => this.errors.push(e));
+                let data = await axios.get('/getNews', { params: date});
+
+                if(data) {
+                    this.showNews(data.data.concat(this.items));
+                    this.connection = true;
+                } else this.connection = false;
             },
+
+
+
             showNews: function (items) {
                 this.items = items;
-                this.lastDate = items[0].createdAt;
+                this.lastDate = items[0] ? items[0].createdAt : new Date(1970);
             },
-            setShowEffects: function (numb) {
-                this.setHiddenClassNameToNewItems(numb, this.setVisibleClassNameToNewItem);
-            },
-            setHiddenClassNameToNewItems: function (numb, callback) {
-                for (let i = 0; i < numb; i++) {
-                    this.items[i].className = "hid";
-                }
-                setInterval(callback(numb), 900);
-            },
-            setVisibleClassNameToNewItem: function (numb) {
 
-                for (let i = 0; i < numb; i++) {
-                    this.items[i].className = "newsBlock";
+            deleteNews: function (item) {
+                let data = {
+                    _id: item.target.id,
+                };
+                axios.post('/deleteNews', data).then(res => {
+                    if(res)
+                        this.removeOneFromArr(this.items, item.target.id);
+                });
+            },
+
+            removeOneFromArr: function (arr, id) {
+                let index = this.getIndexOf(arr, id);
+                this.items.splice(index, 1);
+                //this.$nextTick();
+            },
+
+            getIndexOf: function (arr, id) {
+                let i = arr.length;
+                while(i--)
+                    if(arr[i]._id === id)
+                        return i;
+                return -1;
+            },
+
+            notificator: function (type, message) {
+                switch (type) {
+                    case 'info': this.$toaster.info(message);
+                        break;
+                    case 'success': this.$toaster.success(message);
+                        break;
+                    case 'warning': this.$toaster.warning(message);
+                        break;
+                    case 'error': this.$toaster.error(message);
+                        break;
                 }
 
             }
         },
-        watch: {
-            items: function (itm, oldItm) {
 
+        filters: {
+            validateTitle: function (text) {
+                const maxTitle = 30;
+
+                if (text.length > maxTitle)
+                    return text.slice(0, maxTitle);
+                else return text
+            },
+
+            validateDescription: function (text) {
+                const maxDescription = 150;
+
+                if (text.length > maxDescription)
+                    return text.slice(0, maxDescription)
+                else return text
+            },
+
+            validateDate: function (date) {
+                return date.substring(0, 10) + ' '+ date.substring(11, 19);
+                //return new Date(dt);
             }
-        }
-    }
+        },
 
+
+
+    }
 
 
 </script>
 
 <style>
-    html {
-        background-color:#fffacd;
-    }
-    html {
-         background-color:#fffacd;
-         transition: 0.3s all;
+    html, body {
+        background-color: wheat!important;
+        transition: 0.3s all;
      }
     #app {
         padding-top: .1%;
@@ -145,113 +251,39 @@
         margin-top: 5%;
         transition: 0.3s all;
     }
-    .hid{
-        position: relative;
-        width: 50%;
-        height: 50%;
-        margin-top: 3%;
-        margin-left: 50%;
-        left: -25%;
-        opacity: 0.3;
-        background-color:#FFFFF0;
-        box-shadow: 0 0 5px rgba(0,0,0,0.5);
-        transition: 0.3s all;
-        overflow: hidden;
-    }
-    .newsBlock{
-        position: relative;
-        width: 50%;
-        height: 50%;
-        margin-top: 3%;
-        margin-left: 50%;
-        left: -25%;
-        background-color:#FFFFF0;
-        box-shadow: 0 0 5px rgba(0,0,0,0.5);
-        transition: 0.3s all;
-        overflow: hidden;
-    }
-    .apdxBlock{
-        position: relative;
-        width: 100%;
-        height: 5%;
-        background-color: #1b6d85;
-    }
-    #ModalBodyAddNews{
-        width: 50%;
-        height: 50%;
-    }
-    #addNews {
-        margin-top: 5%;
-    }
-    .AddNews{
-        position: absolute;
-        height: 35px;
-        padding-top: 5px;
-        margin-left: 50%;
-        width: 50%;
-        left: -25%;
-        font-size: large;
-        text-align: center;
-        background-color: #67b168;
-        box-shadow: 0 0 10px rgba(0,0,0,0.5);
-        cursor: pointer;
-    }
-
-    .spanPopUpAddTitle {
-
-        text-align: center;
-    }
-    .formCreateNews{
-        margin-left: 50%;
-        left: -25%;
-        width: 100%;
-        transition: 0.3s all ;
-    }
-    .inputPopUpAddTitle{
-        width: 100%;
-    }
-    .inputPopUpAddDescription {
-        width: 100%;
-        height: 150px;
-    }
-    #addNewsOpen {
-        position: absolute;
-        height: 30px;
-        font-size: medium;
-        margin-top: 0.5%;
-        margin-left: 64%;
-    }
-    .newsHeader{
-        position: inherit;
-        width: 100%;
+    #Unauthorized {
+        position: fixed;
+        left: 50%;
+        margin-left: -25%;
+        margin-top: 10%;
         height: 20%;
-        border: solid 0px black;
-        margin-top: 0%;
-        box-shadow: 0 0 10px rgba(0,0,0,0.5);
-        transition: 0.3s all;
+        width: 50%;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        background: rgba(255, 43, 64, 0.2);
     }
-    .spanNewsHeader {
+    .v-toast-error {
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
+    }
+    .title-background {
+        background: rgba(138,138,138, 0.5);
+        width: 105%;
         position: absolute;
-        text-align: center;
-        margin-top: 2%;
-        width: 100%;
-        font-size: x-large;
-        white-space: nowrap;
-        overflow: hidden;
-        padding: 5px;
-        text-overflow: ellipsis;
-        cursor: pointer;
+        margin-left: -5%;
+        padding-left: 5%;
+
     }
-    .spanNewsBody{
-        word-wrap: break-word;
+    .description-background{
         overflow: hidden;
-        padding: 5px;
-        text-overflow: ellipsis;
-        text-justify-trim: normal;
     }
-    .newsBody{
-        padding: 5px;
-        font-size: medium;
-        transition: 0.3s all;
+    .card {
+        background-color: whitesmoke;
+        position: relative;
+        border-radius: 2px;
+        min-width: 0;
+        z-index: 1;
+    }
+    .card__actions {
+        z-index: 2;
+        position: relative;
     }
 </style>

@@ -10,8 +10,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.15.0/jquery.validate.min.js"></script>
     <link rel="stylesheet" type="text/css" href="style/header.css">
     <link rel="stylesheet" href="style/MyOfficeStyle.css">
-    <script src="scripts/cookie.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.16.2/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/async/2.5.0/async.min.js"></script>
+    <script>
 
+    </script>
 </head>
 
 <body  >
@@ -29,43 +32,43 @@
     </ul>
 
     <script>
-        var dropDown = $("#DropDown");
-
-        if($.cookie("btnExit") == undefined) {
-            $("#btnExit").remove();
-        }
-        $("#btnExit").click(function () {
-            $.removeCookie('btnExit');
-            $.ajax({
-                url: "/delete",
-                type: "POST",
-                success:function (res) {
-                    if(res) {
-                        window.location.href = "/index";
-                    }
-                },
-                error: function (err) {
-                    console.log("Error", err);
-                    alert("Error", err);
-                }
-            });
-            $("#btnExit").remove();
-        });
-        function ShowDropDown(element) {
-
-            if(element.id == "ShowDropDown") {
-                dropDown.show("medium");
-                element.id = "HideDropDown";
-            } else {
-                dropDown.hide("medium");
-                element.id = "ShowDropDown";
-            }
-            element.onblur = function () {
-                dropDown.hide("slow");
-                element.id = "ShowDropDown";
-            }
-
-        }
+//        var dropDown = $("#DropDown");
+//
+//        if($.cookie("btnExit") == undefined) {
+//            $("#btnExit").remove();
+//        }
+//        $("#btnExit").click(function () {
+//            $.removeCookie('btnExit');
+//            $.ajax({
+//                url: "/delete",
+//                type: "POST",
+//                success:function (res) {
+//                    if(res) {
+//                        window.location.href = "/index";
+//                    }
+//                },
+//                error: function (err) {
+//                    console.log("Error", err);
+//                    alert("Error", err);
+//                }
+//            });
+//            $("#btnExit").remove();
+//        });
+//        function ShowDropDown(element) {
+//
+//            if(element.id == "ShowDropDown") {
+//                dropDown.show("medium");
+//                element.id = "HideDropDown";
+//            } else {
+//                dropDown.hide("medium");
+//                element.id = "ShowDropDown";
+//            }
+//            element.onblur = function () {
+//                dropDown.hide("slow");
+//                element.id = "ShowDropDown";
+//            }
+//
+//        }
 
     </script>
 </header>
