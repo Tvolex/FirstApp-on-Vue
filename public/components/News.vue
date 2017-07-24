@@ -2,10 +2,18 @@
 <template>
     <div id="app">
 
+        <my-header></my-header>
+        <router-view></router-view>
+
+        <template v-if="spinner === true">
+            <div class="spinner">
+                <div class="cssload-spin-box"></div>
+            </div>
+        </template>
         <template v-if="login" >
             <div>
-                <my-header></my-header>
-                <router-view></router-view>
+
+
 
                 <createNewsModal > </createNewsModal>
                 <div class="GeneralBlock">
@@ -42,8 +50,8 @@
                                         <v-card-title>
                                             <div>
                                                 <span class="description-background">{{item.description | validateDescription}}</span><br>
-                                                <br><span class="grey--text">Date:{{item.createdAt | validateDate}}</span>
-                                                <span class="grey--text">{{item.author}}</span><br>
+                                                <br><span class="grey--text">Date: {{item.createdAt | validateDate}}</span>
+                                                <span class="grey--text">Author: {{item.author}}</span><br>
                                             </div>
                                         </v-card-title>
                                         <v-card-actions>
@@ -64,11 +72,13 @@
             </div>
         </template>
 
+
+
         <template v-else-if="login === false">
             <div  align="center" id="Unauthorized">
                 <h5>You don`t have access to this page</h5>
                 <hr>
-                <h5>Please, <a href="/Enter">Login</a> </h5>
+                <h5>Please, <a  href="/Enter">Login</a> </h5>
 
             </div>
         </template>
@@ -87,7 +97,7 @@
     import Vuetify from 'vuetify'
     import 'v-toaster/dist/v-toaster.css'
     import 'vuetify/dist/vuetify.min.css'
-
+    import './../style/spinner.css'
     import createNewsModal from './createNewsModal.vue'
     import header from './header.vue'
 
@@ -100,26 +110,34 @@
 
             return {
                 items: [],
-                login: false,
+                login: undefined,
                 connection: false,
                 lastDate: new Date(1970),
-                errors: []
+                errors: [],
+                spinner: true
             }
         },
-        created: async function () {
 
-            // check login
+        created: function () {
+
+        },
+
+        beforeMounted: function () {
+
+        },
+
+        mounted: async function () {
             try {
-               let login = await axios.get('/login');
-               this.login = login.data.login;
-
-            } catch (e) {
+                let login = await axios.get('/login');
+                this.login = login.data.login;
+            } catch (error) {
+                this.login = false;
+                this.errors.push(error);
                 let errorNotification = "401: Unauthorized.";
                 this.notificator('error', errorNotification);
-                console.log(e);
+                console.log(error);
             }
             this.checkLogin();
-
         },
 
         methods: {
@@ -155,6 +173,7 @@
                 if(data) {
                     this.showNews(data.data.concat(this.items));
                     this.connection = true;
+                    this.spinner = false;
                 } else this.connection = false;
             },
 
@@ -239,6 +258,22 @@
         background-color: wheat!important;
         transition: 0.3s all;
      }
+    .spinner {
+        position: absolute;
+        top: 30%;
+        left: 50%;
+        width: 160px;
+        height: 150px;
+        margin-left: -80px;
+        margin-top: -75px;
+        display: block;
+        z-index: 3;
+    }
+    @-webkit-keyframes spin {
+        0%  {-webkit-transform: rotate(0deg);}
+        100% {-webkit-transform: rotate(360deg);}
+    }
+
     #app {
         padding-top: .1%;
         transition: 0.3s all;
@@ -251,7 +286,7 @@
         margin-top: 5%;
         transition: 0.3s all;
     }
-    #Unauthorized {
+    [v-cloak], #Unauthorized {
         position: fixed;
         left: 50%;
         margin-left: -25%;
@@ -260,6 +295,7 @@
         width: 50%;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
         background: rgba(255, 43, 64, 0.2);
+        z-index: 3;
     }
     .v-toast-error {
         box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
@@ -286,4 +322,9 @@
         z-index: 2;
         position: relative;
     }
+
+
+    /* ****** Download Spinner loading  from 'http://cssload.net/en/spinners/2'****** */
+
+
 </style>

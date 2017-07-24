@@ -57,5 +57,14 @@
   "engines": {
     "node": "8.1.4",
     "npm": "5.3.0"
+  },
+  "eslintConfig": {
+    "env": {
+      "browser": true,
+      "node": true,
+      "es6": true,
+      "mongo": true,
+      "amd": true
+    }
   }
 }

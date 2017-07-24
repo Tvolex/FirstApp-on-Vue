@@ -23,7 +23,8 @@
                             <br><input type="text" v-model="createItem.img" class="inputPopUpAddTitle form-control" id="img" name="img">
                             <br><input type="file" >
 
-                            <button class="btn btn-primary" id="addNews"  v-on:click="createNews">Add news</button>
+                            <button class="btn btn-primary btnAddNews" v-on:click="createNews">Add news</button>
+                            <button class="btn btn-primary btnAddNews" v-on:click="AutoCreateNews">Start auto create news</button>
                         </form>
 
                     </div>
@@ -46,6 +47,7 @@
                     description: '',
                     img: '',
                 },
+                testId: 0,
                 lastDate: new Date(1970),
                 errors: [],
             }
@@ -66,6 +68,24 @@
                 axios.post('/createNews', data);
             },
 
+            createNewsTest: function () {
+
+                let data = {
+                    author: "596ddd31434e28097f2d67d5",
+                    title: "test " + this.testId,
+                    description: "test",
+                    img: "",
+                }
+
+                axios.post('/createNews', data);
+                console.log("test id: " + this.testId++);
+            },
+
+            AutoCreateNews: function () {
+                event.preventDefault();
+                setInterval(() => this.createNewsTest(), 50)
+            }
+
         },
     }
 
@@ -76,7 +96,7 @@
         width: 50%;
         height: 50%;
     }
-    #addNews {
+    #btnAddNews {
         margin-top: 5%;
     }
     .AddNews{
@@ -91,6 +111,7 @@
         background-color: whitesmoke;
         box-shadow: 0 0 10px rgba(0,0,0,0.5);
         cursor: pointer;
+        z-index: 3;
     }
 
     .spanPopUpAddTitle {
