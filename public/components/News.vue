@@ -35,7 +35,7 @@
                                 <v-flex xs12 sm6 offset-sm3>
                                     <v-card v-bind:key="'card'+item._id" transition="scale-transition">
                                         <v-card-media
-                                                class="black--text"
+                                                class="black--text img"
                                                 height="200px"
                                                 v-bind:src="item.img ? item.img : '/img/DevPicture.jpg'">
 
@@ -220,7 +220,8 @@
                         break;
                 }
 
-            }
+            },
+
         },
 
         filters: {
@@ -258,6 +259,21 @@
         background-color: wheat!important;
         transition: 0.3s all;
      }
+    .headline,.title-background {
+        margin-top: 15px;
+        z-index: 2;
+    }
+    .headline,.title-background,.card__media__background {
+        -webkit-transform: scale(1.1);
+        transform: scale(1.1);
+        -webkit-transition: .3s ease-in-out;
+        transition: .3s ease-in-out;
+        z-index: 2;
+    }
+    .headline,.title-background,.card__media__background:hover{
+        -webkit-transform: scale(1);
+        transform: scale(1);
+    }
     .spinner {
         position: absolute;
         top: 30%;
@@ -322,9 +338,6 @@
         z-index: 2;
         position: relative;
     }
-
-
-    /* ****** Download Spinner loading  from 'http://cssload.net/en/spinners/2'****** */
 
 
 </style>

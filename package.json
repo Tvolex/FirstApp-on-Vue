@@ -5,7 +5,7 @@
   "author": "Tvolex <tisyanchin13@gmail.com>",
   "private": false,
   "scripts": {
-    "dev": "cross-env NODE_ENV=dev nodemon --watch src src/server.js",
+    "dev": "cross-env NODE_ENV=dev nodemon --watch src src/server.js ",
     "start": "node src/server.js",
     "build": "webpack",
     "build:watch": "webpack --watch"
