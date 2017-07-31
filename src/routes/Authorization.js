@@ -32,7 +32,9 @@ const Auth = router.post("/", async (req, res) => {
         doc = await FindUser(User.email, User.password, User.sessionID);
 
         if (doc) {
-            req.session.UserEmail = User.email;
+            req.session.user_id = doc._id;
+            req.session.user_email = User.email;
+            console.log(req.session);
 
             res.status(200)
                 .cookie('btnExit', true)

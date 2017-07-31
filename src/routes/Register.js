@@ -36,7 +36,7 @@ var Register = router.post("/", (req,res) => {
                     collection.insertOne(UsersDocument);
                     collection.createIndex({"name" : 1}, {"unique" : true});
                     console.log("New user : " , UserEmail);
-                    req.session.UserEmail = UserEmail;
+                    req.session.user_email = UserEmail;
                     res.cookie('btnExit', true);
                     res.status(200).send(user);
                     res.end();

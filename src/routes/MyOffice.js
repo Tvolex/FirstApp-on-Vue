@@ -10,7 +10,7 @@ const MyOffice = router.get('/', async (req, res)=>{
 
     const Session = {};
     Session.id = req.session.id;
-    Session.UserEmail = req.session.UserEmail;
+    Session.UserEmail = req.session.user_email;
 
     const db = await MongoClient.connect(DBurl);
     const collection = db.collection('users');

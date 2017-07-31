@@ -1,7 +1,6 @@
 <!--suppress HtmlUnknownTag -->
 <template>
     <div id="app">
-
         <my-header></my-header>
         <router-view></router-view>
 
@@ -11,14 +10,11 @@
             </div>
         </template>
         <template v-if="login" >
+
             <div>
-
-
-
                 <createNewsModal > </createNewsModal>
                 <div class="GeneralBlock">
-
-                    <transition-group transition="slide-y-transition" name="list" tag="div">
+                    <transition-group appear name="list" tag="div" list-enter list-leave>
                         <!-- <div v-for="item in items" class="newsBlock" v-bind:id="item._id" v-bind:key="item._id">
                              <div class="newsHeader" >
                                  <span class="spanNewsHeader" >{{item.title}}</span>
@@ -29,7 +25,7 @@
                              </div>
                          </div> -->
 
-                        <div style="margin-top: 20px; transition: 0.3s all" v-for="item in items" v-bind:id="item._id" v-bind:key="item._id">
+                        <div style="margin-top: 20px; transition: 0.3s all" v-for="item in items" v-bind:id="item._id" v-bind:key="'div' + item._id">
 
                             <v-layout v-bind:key="'layout'+item._id" transition="scale-transition">
                                 <v-flex xs12 sm6 offset-sm3>
@@ -37,27 +33,29 @@
                                         <v-card-media
                                                 class="black--text img"
                                                 height="200px"
-                                                v-bind:src="item.img ? item.img : '/img/DevPicture.jpg'">
+                                                v-bind:src="item.img ? item.img : '/img/DevPicture.jpg'"
+                                                v-bind:key="'card-media'+item._id">
 
-                                            <v-container fill-height fluid>
-                                                <v-layout fill-height>
-                                                    <v-flex xs12 align-end flexbox>
-                                                        <span class="headline white--text title-background">{{item.title | validateTitle}}</span>
+                                            <v-container fill-height fluid v-bind:key="'container'+item._id">
+                                                <v-layout fill-height v-bind:key="'layout2'+item._id">
+                                                    <v-flex v-bind:key="'flex'+item._id" xs12 align-end flexbox>
+                                                        <span v-bind:key="'span'+item._id" class="headline white--text title-background">{{item.title | validateTitle}}</span>
                                                     </v-flex>
                                                 </v-layout>
                                             </v-container>
                                         </v-card-media>
-                                        <v-card-title>
-                                            <div>
-                                                <span class="description-background">{{item.description | validateDescription}}</span><br>
-                                                <br><span class="grey--text">Date: {{item.createdAt | validateDate}}</span>
-                                                <span class="grey--text">Author: {{item.author}}</span><br>
+                                        <v-card-title v-bind:key="'card-title'+item._id">
+                                            <div v-bind:key="'div2'+item._id">
+                                                <span v-bind:key="'span2'+item._id" class="description-background">{{item.description | validateDescription}}</span><br>
+                                                <br><span v-bind:key="'span3'+item._id" class="grey--text">Date: {{item.createdAt | validateDate}}</span>
+                                                <span v-bind:key="'span4'+item._id" class="grey--text">Author: {{item.author}}</span><br>
                                             </div>
                                         </v-card-title>
-                                        <v-card-actions>
-                                            <v-btn flat class="orange--text">Share</v-btn>
-                                            <v-btn flat class="orange--text">Explore</v-btn>
-                                            <button class="close"  v-bind:id="item._id" v-on:click="deleteNews($event)"  type="button" > &times; </button>
+                                        <v-card-actions v-bind:key="'card-actions2'+item._id">
+                                            <v-btn v-bind:key="'btn1'+item._id" flat class="orange--text">Share</v-btn>
+                                            <v-btn v-bind:key="'btn2'+item._id" flat class="orange--text">Explore</v-btn>
+                                            <v-btn v-bind:key="'btn3'+item._id" flat class="orange--text" if="author">Edit</v-btn>
+                                            <v-btn v-bind:key="'btn4'+item._id" flat class="orange--text" if="author" v-bind:id="item._id" v-on:click="deleteNews">Delete</v-btn>
                                         </v-card-actions>
                                     </v-card>
                                 </v-flex>
@@ -109,6 +107,10 @@
         data: () => {
 
             return {
+                actions: [
+                    {title: "Edit", route: "/edit"},
+                    {title: "Delete", route: "/deleteNews"}
+                ],
                 items: [],
                 login: undefined,
                 connection: false,
@@ -184,20 +186,23 @@
                 this.lastDate = items[0] ? items[0].createdAt : new Date(1970);
             },
 
-            deleteNews: function (item) {
+            deleteNews: function (event) {
+
+                let elemId = event.currentTarget.id;
                 let data = {
-                    _id: item.target.id,
+                    _id: elemId
                 };
+
                 axios.post('/deleteNews', data).then(res => {
                     if(res)
-                        this.removeOneFromArr(this.items, item.target.id);
+                        this.removeOneFromArr(this.items, elemId);
                 });
             },
 
             removeOneFromArr: function (arr, id) {
                 let index = this.getIndexOf(arr, id);
                 this.items.splice(index, 1);
-                //this.$nextTick();
+                this.$nextTick();
             },
 
             getIndexOf: function (arr, id) {
@@ -237,7 +242,7 @@
                 const maxDescription = 150;
 
                 if (text.length > maxDescription)
-                    return text.slice(0, maxDescription)
+                    return text.slice(0, maxDescription);
                 else return text
             },
 
@@ -274,6 +279,7 @@
         -webkit-transform: scale(1);
         transform: scale(1);
     }
+
     .spinner {
         position: absolute;
         top: 30%;
@@ -335,9 +341,16 @@
         z-index: 1;
     }
     .card__actions {
+
         z-index: 2;
         position: relative;
     }
-
+    .list {
+        overflow: inherit;
+        z-index: 5;
+    }
+    .list-move {
+        transition: 0.3s all;
+    }
 
 </style>
