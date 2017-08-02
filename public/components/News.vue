@@ -135,7 +135,7 @@
             } catch (error) {
                 this.login = false;
                 this.errors.push(error);
-                let errorNotification = "401: Unauthorized.";
+                let errorNotification = "Error: 401 Unauthorized.";
                 this.notificator('error', errorNotification);
                 console.log(error);
             }
