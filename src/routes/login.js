@@ -11,22 +11,30 @@ const login = router.get('/', async(req, res) => {
     Session.id = req.session.id;
     Session.UserEmail = req.session.user_email;
 
-    const db = await MongoClient.connect(DBurl);
-    const collection = db.collection("users");
-    const doc = await collection.find({"UserEmail" : Session.UserEmail, "SessionID" : req.session.id}).limit(1).next();
+    try {
+        const db = await MongoClient.connect(DBurl);
+        const collection = db.collection("users");
+        const doc = await collection.find({"UserEmail" : Session.UserEmail, "SessionID" : req.session.id}).limit(1).next();
 
-    console.log("login.js: Connection to db: " + DBurl);
+        console.log("login.js: Connection to db: " + DBurl);
 
-    db.close();
+        db.close();
 
-    if (doc)
-        res.status(200)
-            .cookie('btnExit', true)
-            .json({login: true});
-    else
-        res.status(401)
+        if (doc)
+            res.status(200)
+                .cookie('btnExit', true)
+                .json({login: true});
+        else
+            res.status(401)
+                .clearCookie('btnExit')
+                .json({login: false});
+    } catch (e) {
+        res.status(500)
             .clearCookie('btnExit')
-            .json({login: false});
+            .json({error: e, login: false});
+    }
+
+
 });
 
 module.exports = login;

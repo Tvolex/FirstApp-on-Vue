@@ -4,7 +4,7 @@
         <my-header></my-header>
         <router-view></router-view>
 
-        <template v-if="spinner === true">
+        <template v-if="spinner === true" appear v-cloak>
             <div class="spinner">
                 <div class="cssload-spin-box"></div>
             </div>
@@ -14,7 +14,7 @@
             <div>
                 <createNewsModal > </createNewsModal>
                 <div class="GeneralBlock">
-                    <transition-group appear name="list" tag="div" list-enter list-leave>
+                    <transition-group appear name="list" tag="div" >
                         <!-- <div v-for="item in items" class="newsBlock" v-bind:id="item._id" v-bind:key="item._id">
                              <div class="newsHeader" >
                                  <span class="spanNewsHeader" >{{item.title}}</span>
@@ -134,10 +134,8 @@
                 this.login = login.data.login;
             } catch (error) {
                 this.login = false;
-                this.errors.push(error);
-                let errorNotification = "Error: 401 Unauthorized.";
-                this.notificator('error', errorNotification);
-                console.log(error);
+                this.spinner = false;
+                this.errorHandler(error);
             }
             this.checkLogin();
         },
@@ -151,7 +149,9 @@
             },
 
             updateNews: function () {
-                setInterval(() => this.getNews(), 5000);
+                this.connection ?
+                    setInterval(() => this.getNews(), 5000):
+                    setInterval(() => this.getNews(), 50000);
             },
 
             createNews: async function() {
@@ -169,14 +169,15 @@
 
             getNews: async function () {
                 let date = { lastDate: this.lastDate};
-
-                let data = await axios.get('/getNews', { params: date});
-
-                if(data) {
+                try {
+                    let data = await axios.get('/getNews', { params: date});
                     this.showNews(data.data.concat(this.items));
-                    this.connection = true;
                     this.spinner = false;
-                } else this.connection = false;
+                } catch (e) {
+                    this.connection = false;
+                    this.errorHandler(e);
+                }
+
             },
 
 
@@ -225,6 +226,15 @@
                         break;
                 }
 
+            },
+
+            errorHandler: function (error) {
+                let errorNotification = error.response.status + ' : ' + error.response.statusText;
+
+                this.errors.push(error);
+                this.notificator('error', errorNotification);
+
+                console.log(error);
             },
 
         },
